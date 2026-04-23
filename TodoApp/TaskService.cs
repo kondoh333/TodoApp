@@ -10,22 +10,22 @@ namespace TodoApp
     public class TaskService : ITaskService
     {
         //状態をserviceに集約して、保存状態をカプセル化している
-        //保存、読み込みを担当
+
         private readonly ITaskRepository _repository;
 
-        //本物の全データを持つリスト
-        private List<TaskItem> _allTasks;
-
-        //UIと連動させるためのコレクション、これは中身が変わったら通知するリスト
+        //UIと連動させるためのコレクション
+        //これは中身が変わったら通知するリスト
         private BindingList<TaskItem> _tasks;
 
-        //現在の検索文字
-        private string _cnrrentkeyword = string.Empty;
-
+        //private List<TaskItem> _tasks;
         
         public TaskService(ITaskRepository repository )
         {
             _repository = repository;
+
+            //repositoryから読み込んだlistをbindinglistに変換
+            _tasks = new BindingList<TaskItem>(_repository.Load());
+
         }
 
 
@@ -63,8 +63,13 @@ namespace TodoApp
             if(index >= 0 && index < _tasks.Count)
             {
                 _tasks[index].IsCompleted = !_tasks[index].IsCompleted; 
+
+                //状態変更をUIに通知するため
+             
             }
         }
+
+
 
         //保存
         public void Save()

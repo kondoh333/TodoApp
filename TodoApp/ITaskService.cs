@@ -21,9 +21,6 @@ namespace TodoApp
         //完了状態切り替え
         void ToggleComplete(int index);
 
-        //検索
-        void Search(string keyword);
-
         //保存
         void Save();
     }
