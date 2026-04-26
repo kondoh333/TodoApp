@@ -10,31 +10,37 @@ namespace TodoApp
     public class TaskService : ITaskService
     {
         //状態をserviceに集約して、保存状態をカプセル化している
-
+        //保存、読み込みを担当する
         private readonly ITaskRepository _repository;
 
-        //UIと連動させるためのコレクション
-        //これは中身が変わったら通知するリスト
-        private BindingList<TaskItem> _tasks;
+        //本物の全データを持つリスト
+        private List<TaskItem> _allTaksks;
 
-        //private List<TaskItem> _tasks;
+        //これは中身が変わったら通知するリスト
+        //役割は画面に表示するためのリスト
+        private BindingList<TaskItem> _visitableTasks;
+
+        //現在の検索文字
+        private string _currentkeyword = string.Empty;
+
         
         public TaskService(ITaskRepository repository )
         {
             _repository = repository;
 
-            //repositoryから読み込んだlistをbindinglistに変換
-            _tasks = new BindingList<TaskItem>(_repository.Load());
+            //ファイルから読み込んだデータを本物の一覧として保持する
+            _allTaksks = _repository.Load();
+
+            //最初は全件表示にする
+            _visitableTasks = new BindingList<TaskItem>(new List<TaskItem>(_allTaksks));
 
         }
 
 
         //UIに公開する一覧
-        //
-
         public BindingList<TaskItem> GetAll()
         {
-            return _tasks;
+            return _visitableTasks;
         }
 
 
@@ -46,27 +52,59 @@ namespace TodoApp
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("タスク名が空です");
 
-            _tasks.Add(new TaskItem(name));
-            //BindingListなのでUIが自動的に更新される
+            //前後の空白を除去してから追加する
+            var task = new TaskItem(name.Trim());
+
+            //本物の一覧に追加
+            _allTaksks.Add(task);
+
+            //今の検索条件で表示を作り直す
+            ApplyFilter();
         }
 
         //削除
         public void Delete(int index)
         {
-            if (index >= 0 && index < _tasks.Count)
-                _tasks.RemoveAt(index);
+            //表示用リストの範囲外なら何もしない
+            if (index < 0 || index >= _visitableTasks.Count)
+                return;
+
+            //画面で選ばれたタスク本体を取得
+            var taskToDelete = _visitableTasks[index];
+
+            //本物の一覧から削除
+            _allTaksks.Remove(taskToDelete);
+
+            //検索条件に合わせて表示を更新
+            ApplyFilter();
         }
 
         //完了状態切り替え
         public void ToggleComplete(int index)
         {
-            if(index >= 0 && index < _tasks.Count)
-            {
-                _tasks[index].IsCompleted = !_tasks[index].IsCompleted; 
+            //表示用リストの範囲外なら何もしない
+            if (index < 0 || index >= _visitableTasks.Count)
+                return;
 
-                //状態変更をUIに通知するため
-             
-            }
+            //画面で選ばれたタスク本体を取得
+            var task = _visitableTasks[index];
+
+            //完了状態を変更
+            task.IsCompleted = !task.IsCompleted;
+
+            //検索条件に合わせて表示を更新
+            //今回は必要ないが拡張に備えて更新しておく
+            ApplyFilter();
+        }
+
+        //検索
+    　　public void Search(string keyword)
+        {
+            //null対策、検索文字を保存しておく
+            _currentkeyword = keyword ?? string.Empty;
+
+            //今の検索条件で表示を更新
+            ApplyFilter();
         }
 
 
@@ -74,8 +112,38 @@ namespace TodoApp
         //保存
         public void Save()
         {
-            //BindinListをListに変換して保存
-            _repository.Save(_tasks.ToList());
+            //保存は画面表示用ではなく本物のデータ
+            _repository.Save(_allTaksks);
+        }
+
+        //表示用リストを今の検索条件で作り直す
+        private void ApplyFilter()
+        {
+            //検索文字の前後の空白を無視する
+            string keyword = _currentkeyword.Trim();
+
+            //一度表示用リストを空にする
+            _visitableTasks.Clear();
+
+            //検索文字が空白なら全件表示する
+            if (string.IsNullOrEmpty(keyword))
+            {
+                foreach(var task in _allTaksks)
+                {
+                    _visitableTasks.Add(task);
+                }
+
+                return;
+            }
+
+            //名前に部分一致するするものだけを表示
+            foreach(var task in _allTaksks)
+            {
+                if(task.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                {
+                    _visitableTasks.Add(task);
+                }
+            }
         }
     }
 }

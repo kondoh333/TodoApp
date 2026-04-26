@@ -32,9 +32,9 @@ namespace TodoApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message,"エラー");
+                MessageBox.Show(ex.Message, "エラー");
             }
-            
+
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
@@ -61,10 +61,17 @@ namespace TodoApp
             }
         }
 
+        //検索欄に文字が入るたびに呼ばれる
+        private void searchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _service.Search(searchTextBox.Text);
+        }
+
         private void CompleteButton_Click(object sender, EventArgs e)
         {
             _service.ToggleComplete(listBox1.SelectedIndex);
         }
+
     }
 
 }
