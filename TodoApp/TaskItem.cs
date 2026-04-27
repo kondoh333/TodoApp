@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace TodoApp
 {
+    //優先度を表すenum
+    public enum TaskPriority
+    {
+        Low,    //低
+        Medium, //中
+        High    //高
+    }
+
     //タスク一つの設計図
     //INotifyPropertyChangedはプロパティが変わったことを通知するためのもの
     public class TaskItem : INotifyPropertyChanged
@@ -14,18 +22,28 @@ namespace TodoApp
         private string _name;
         private bool _isCompleted;
 
+        //優先度の初期値は中にしておく
+        private TaskPriority _priority = TaskPriority.Medium;
+
         //作成日時は基本的に変更しないのでそのまま
         public DateTime CreatedDate { get; set; }
 
         //イベント（変更通知）
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public TaskItem(string name)
+
+
+        //タスク生成時に名前と優先度を受け取る
+        //優先度を指定しなかった場合は中になる
+        public TaskItem(string name, TaskPriority priprity = TaskPriority.Medium)
         {
             _name = name;
             _isCompleted = false;
+            _priority = priprity;
             CreatedDate = DateTime.Now;
         }
+
+
 
         //Nameプロパティ
         public string Name
@@ -55,16 +73,47 @@ namespace TodoApp
             }
         }
 
+        //優先度
+        public TaskPriority Priority
+        {
+            get { return _priority; }
+            set
+            {
+                if( _priority != value)
+                {
+                    _priority = value;
+
+                    //priorityが変わったことをUIに通知する
+                    OnPropertyChanged(nameof(Priority));
+                }
+            }
+        }
+
+
         //変更通知を送るメソッド
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+
+        //ListBoxに表示される文字列
         public override string ToString()
         {
             string status =  IsCompleted ? "✓" : "□";
-            return $"{status}{Name}({CreatedDate.ToShortDateString()})";
+
+            //enumの値を日本語に変換する
+            string priorityText = Priority switch
+            {
+                TaskPriority.Low => "低",
+                TaskPriority.Medium => "中",
+                TaskPriority.High => "高",
+
+                //万が一想定外の値が来た場合は中として表示する
+                _ => "中"
+            };
+
+            return $"[{priorityText}]{status}{Name}({CreatedDate.ToShortDateString()})";
         }
     }
 }

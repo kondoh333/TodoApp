@@ -45,15 +45,16 @@ namespace TodoApp
 
 
         //タスク追加
-        public void Add(string name)
+        //名前と選ばれた優先度
+        public void Add(string name, TaskPriority priority)
         {
             //何も入力していないのに保存できないようにする
             //バリデーションチェックという
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("タスク名が空です");
 
-            //前後の空白を除去してから追加する
-            var task = new TaskItem(name.Trim());
+            //前後の空白を除去して、優先度もセットしてから追加する
+            var task = new TaskItem(name.Trim(), priority);
 
             //本物の一覧に追加
             _allTaksks.Add(task);

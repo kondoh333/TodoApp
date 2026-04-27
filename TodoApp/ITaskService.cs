@@ -13,7 +13,7 @@ namespace TodoApp
         BindingList<TaskItem> GetAll();
 
         //タスク追加
-        void Add(string name);
+        void Add(string name, TaskPriority priority);
 
         //削除
         void Delete(int index);

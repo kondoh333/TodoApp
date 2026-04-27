@@ -14,6 +14,14 @@ namespace TodoApp
 
             //★データとListBoxを直接つなぐ
             listBox1.DataSource = _service.GetAll();
+
+            //優先度の選択肢をcomboboxに追加する
+            priorityComboBox.Items.Add("低");
+            priorityComboBox.Items.Add("中");
+            priorityComboBox.Items.Add("高");
+
+            //初期値は中
+            priorityComboBox.SelectedIndex = 1;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -27,7 +35,8 @@ namespace TodoApp
 
             try
             {
-                _service.Add(textBox1.Text);
+                //入力されたタスク名と選ばれた優先度をserviceに渡す
+                _service.Add(textBox1.Text, GetSelectedPriority());
                 textBox1.Clear();
             }
             catch (Exception ex)
@@ -49,7 +58,7 @@ namespace TodoApp
             {
                 try
                 {
-                    _service.Add(textBox1.Text);
+                    _service.Add(textBox1.Text,GetSelectedPriority());
                     textBox1.Clear();
                     e.SuppressKeyPress = true;
                 }
@@ -72,6 +81,18 @@ namespace TodoApp
             _service.ToggleComplete(listBox1.SelectedIndex);
         }
 
+        //Comboboxで選ばれた文字をTaskPriorityに変換する
+        private TaskPriority GetSelectedPriority()
+        {
+            return priorityComboBox.SelectedItem?.ToString() switch
+            {
+                "低" => TaskPriority.Low,
+                "高" => TaskPriority.High,
+
+                //中か未選択の場合はmedium扱いにする
+                _ => TaskPriority.Medium
+            };
+        }
     }
 
 }
