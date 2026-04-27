@@ -14,11 +14,11 @@ namespace TodoApp
         private readonly ITaskRepository _repository;
 
         //本物の全データを持つリスト
-        private List<TaskItem> _allTaksks;
+        private List<TaskItem> _allTasks;
 
         //これは中身が変わったら通知するリスト
         //役割は画面に表示するためのリスト
-        private BindingList<TaskItem> _visitableTasks;
+        private BindingList<TaskItem> _visibleTasks;
 
         //現在の検索文字
         private string _currentkeyword = string.Empty;
@@ -29,10 +29,10 @@ namespace TodoApp
             _repository = repository;
 
             //ファイルから読み込んだデータを本物の一覧として保持する
-            _allTaksks = _repository.Load();
+            _allTasks = _repository.Load();
 
             //最初は全件表示にする
-            _visitableTasks = new BindingList<TaskItem>(new List<TaskItem>(_allTaksks));
+            _visibleTasks = new BindingList<TaskItem>(new List<TaskItem>(_allTasks));
 
         }
 
@@ -40,7 +40,7 @@ namespace TodoApp
         //UIに公開する一覧
         public BindingList<TaskItem> GetAll()
         {
-            return _visitableTasks;
+            return _visibleTasks;
         }
 
 
@@ -57,7 +57,7 @@ namespace TodoApp
             var task = new TaskItem(name.Trim(), priority);
 
             //本物の一覧に追加
-            _allTaksks.Add(task);
+            _allTasks.Add(task);
 
             //今の検索条件で表示を作り直す
             ApplyFilter();
@@ -67,14 +67,14 @@ namespace TodoApp
         public void Delete(int index)
         {
             //表示用リストの範囲外なら何もしない
-            if (index < 0 || index >= _visitableTasks.Count)
+            if (index < 0 || index >= _visibleTasks.Count)
                 return;
 
             //画面で選ばれたタスク本体を取得
-            var taskToDelete = _visitableTasks[index];
+            var taskToDelete = _visibleTasks[index];
 
             //本物の一覧から削除
-            _allTaksks.Remove(taskToDelete);
+            _allTasks.Remove(taskToDelete);
 
             //検索条件に合わせて表示を更新
             ApplyFilter();
@@ -84,11 +84,11 @@ namespace TodoApp
         public void ToggleComplete(int index)
         {
             //表示用リストの範囲外なら何もしない
-            if (index < 0 || index >= _visitableTasks.Count)
+            if (index < 0 || index >= _visibleTasks.Count)
                 return;
 
             //画面で選ばれたタスク本体を取得
-            var task = _visitableTasks[index];
+            var task = _visibleTasks[index];
 
             //完了状態を変更
             task.IsCompleted = !task.IsCompleted;
@@ -99,7 +99,7 @@ namespace TodoApp
         }
 
         //検索
-    　　public void Search(string keyword)
+        public void Search(string keyword)
         {
             //null対策、検索文字を保存しておく
             _currentkeyword = keyword ?? string.Empty;
@@ -114,7 +114,7 @@ namespace TodoApp
         public void Save()
         {
             //保存は画面表示用ではなく本物のデータ
-            _repository.Save(_allTaksks);
+            _repository.Save(_allTasks);
         }
 
         //表示用リストを今の検索条件で作り直す
@@ -124,25 +124,25 @@ namespace TodoApp
             string keyword = _currentkeyword.Trim();
 
             //一度表示用リストを空にする
-            _visitableTasks.Clear();
+            _visibleTasks.Clear();
 
             //検索文字が空白なら全件表示する
             if (string.IsNullOrEmpty(keyword))
             {
-                foreach(var task in _allTaksks)
+                foreach(var task in _allTasks)
                 {
-                    _visitableTasks.Add(task);
+                    _visibleTasks.Add(task);
                 }
 
                 return;
             }
 
             //名前に部分一致するするものだけを表示
-            foreach(var task in _allTaksks)
+            foreach(var task in _allTasks)
             {
                 if(task.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                 {
-                    _visitableTasks.Add(task);
+                    _visibleTasks.Add(task);
                 }
             }
         }

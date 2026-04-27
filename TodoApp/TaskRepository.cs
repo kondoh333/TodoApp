@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TodoApp
 {
-    public class FileTaskRepository : ITaskRepository
+    public class FIleTaskRepository : ITaskRepository
     {
+        private const string FilePath = "tasks.txt";
 
         public void Save(List<TaskItem> tasks)
         {
 
             //File.WriteAllLinesはstring[]を要求するためToArrayで変換している
             var lines = tasks
-                .Select(task => $"{task.Name}|{task.IsCompleted}|{task.CreatedDate:o}")
+                .Select(task => $"{task.Name}|{task.IsCompleted}|{task.CreatedDate:o}|{task.Priority}")
                 .ToArray();
 
-            File.WriteAllLines("tasks.txt", lines);
+            File.WriteAllLines(FilePath, lines);
         }
 
         public List<TaskItem> Load()
@@ -27,15 +29,22 @@ namespace TodoApp
             try
             {
                 //ファイルの有無チェック。なければ空のリストを返している
-                if (!File.Exists("tasks.txt"))
+                if (!File.Exists(FilePath))
                     return new List<TaskItem>();
 
-                var tasks = File.ReadAllLines("tasks.txt")
+                var tasks = File.ReadAllLines(FilePath)
                     .Select(line =>
                     {
                         var parts = line.Split('|');
 
-                        return new TaskItem(parts[0])
+                        TaskPriority priority = TaskPriority.Medium;
+
+                        if(parts.Length >= 4)
+                        {
+                            priority = Enum.Parse<TaskPriority>(parts[3]);
+                        }
+
+                        return new TaskItem(parts[0],priority)
                         {
                             IsCompleted = bool.Parse(parts[1]),
                             CreatedDate = DateTime.Parse(parts[2])

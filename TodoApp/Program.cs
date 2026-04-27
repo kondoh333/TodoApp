@@ -12,6 +12,7 @@ namespace TodoApp
 
             //ï€ë∂ï˚ñ@Ç™ç∑Çµë÷Ç¶ÇÁÇÍÇÈ
             ITaskRepository repository = new JsonTaskRepository();
+            //ITaskRepository repository = new FIleTaskRepository();
             ITaskService service = new TaskService(repository);
 
 

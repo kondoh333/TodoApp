@@ -56,11 +56,18 @@
             // listBox1
             // 
             listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
+
+            //優先度ごとに色を変える
+            listBox1.DrawMode = DrawMode.OwnerDrawFixed;
+
+            listBox1.ItemHeight = 22;
             listBox1.Location = new Point(45, 150);
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(300, 184);
             listBox1.TabIndex = 2;
+
+            listBox1.DrawItem += listBox1_DrawItem;
+            listBox1.MouseDown += listBox1_MouseDown;
 
             // 
             // DeleteButton

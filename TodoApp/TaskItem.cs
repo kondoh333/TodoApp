@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace TodoApp
 {
@@ -36,11 +35,11 @@ namespace TodoApp
 
         //タスク生成時に名前と優先度を受け取る
         //優先度を指定しなかった場合は中になる
-        public TaskItem(string name, TaskPriority priprity = TaskPriority.Medium)
+        public TaskItem(string name, TaskPriority priority = TaskPriority.Medium)
         {
             _name = name;
             _isCompleted = false;
-            _priority = priprity;
+            _priority = priority;
             CreatedDate = DateTime.Now;
         }
 
