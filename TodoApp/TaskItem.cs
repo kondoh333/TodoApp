@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace TodoApp
 {
@@ -43,7 +44,14 @@ namespace TodoApp
             CreatedDate = DateTime.Now;
         }
 
-
+        //読み込み時に必要な引数なしコンストラクタ
+        public TaskItem()
+        {
+            _name = string.Empty;
+            _isCompleted = false;
+            _priority = TaskPriority.Medium;
+            CreatedDate = DateTime.Now;
+        }
 
         //Nameプロパティ
         public string Name
