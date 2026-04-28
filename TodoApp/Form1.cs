@@ -78,6 +78,12 @@ namespace TodoApp
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
+            if(listBox1.SelectedIndex < 0)
+            {
+                MessageBox.Show("削除するタスクを選択してください。", "確認");
+                return;
+            }
+
             _service.Delete(listBox1.SelectedIndex);
             listBox1.ClearSelected();
             _lastSelectedIndex = -1;
@@ -106,16 +112,23 @@ namespace TodoApp
         private void searchTextBox_TextChanged(object sender, EventArgs e)
         {
             _service.Search(searchTextBox.Text);
+            listBox1.ClearSelected();
         }
 
         private void CompleteButton_Click(object sender, EventArgs e)
         {
+            if (listBox1.SelectedIndex < 0)
+            {
+                MessageBox.Show("完了状態を変更するタスクを選択してください。", "確認");
+                return;
+            }
+
             //ボタンを押した際にそのタスクに選択状態を残すようにする
             int selectedIndex = listBox1.SelectedIndex;
 
             _service.ToggleComplete(listBox1.SelectedIndex);
 
-            if(selectedIndex >= 0 && selectedIndex < listBox1.Items.Count)
+            if (selectedIndex >= 0 && selectedIndex < listBox1.Items.Count)
             {
                 listBox1.SelectedIndex = selectedIndex;
                 _lastSelectedIndex = selectedIndex;

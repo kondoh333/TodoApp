@@ -87,6 +87,7 @@ namespace TodoApp
             if (index < 0 || index >= _visibleTasks.Count)
                 return;
 
+
             //画面で選ばれたタスク本体を取得
             var task = _visibleTasks[index];
 
