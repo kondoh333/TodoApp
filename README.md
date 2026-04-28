@@ -8,7 +8,7 @@ C# Windows Forms製 Todo管理アプリ
 - 操作性向上を目的としたUI改善
 
 個人開発ポートフォリオとして、
-設計や拡張性、保守性を意識して改善を重ねました。
+拡張のしやすさ、変更のしやすさを意識して設計しました。
 
 ## 機能
 
@@ -22,14 +22,15 @@ C# Windows Forms製 Todo管理アプリ
 - 保存方式の切り替え (txt / JSON)
 
 ## 使用技術
-
 - C#
 - .NET (Windows Forms)
 - System.Text.Json
+
+## 設計・実装で使用した要素
+- Repository Pattern
+- コンストラクタによる依存性注入
 - BindingList
 - INotifyPropertyChanged
-- Repository Pattern
-- Dependency Injection (DI)
 
 ## 設計図・処理フロー
 
@@ -39,9 +40,9 @@ C# Windows Forms製 Todo管理アプリ
 
 ### アーキテクチャ
 
-本アプリは責務分離を意識したレイヤー構造で設計しています。
+本アプリは役割分担を意識した構成で設計しています。
 
-Form : UI (画面操作のみ担当)  
+Form1 : UI (画面操作のみ担当)  
 ↓  
 ITaskService  
 ↓
@@ -49,11 +50,11 @@ TaskService : 業務ロジック (タスク管理・入力チェック)
 ↓  
 ITaskRepository : 保存処理の抽象  
 ↓  
-FileTaskRepository　/　JsonTaskRepository : 保存処理の実装
+FileTaskRepository / JsonTaskRepository : 保存処理の実装
 
 各層が独立することで、変更の影響範囲を限定できる構造としています。  
-依存性注入(DI)により、保存方法の差し替えを可能にしています。  
-検索機能追加時には全件データと表示用データを分離し、検索による整合性崩れを防ぐ設計に変更しました。
+依存性注入（DI）により、保存方法の差し替えを可能にしています。  
+検索機能追加時には全件データと表示用データを分離し、検索時も表示と元データの対応が崩れないよう設計に変更しました。
 
 ### タスク追加の流れ
 
@@ -94,13 +95,13 @@ FileTaskRepository　/　JsonTaskRepository : 保存処理の実装
 
 ## 設計上の工夫
 
-本アプリでは、拡張性と保守性を意識した設計を行いました。
+本アプリでは、拡張のしやすさと変更のしやすさを意識して設計しました。
 
 - UIと業務ロジックを分離し責務を明確化
 - Repository PatternとDIで保存方式差し替えを実現
 - 入力検証と例外通知をService/UIで分担
 - BindingListとINotifyPropertyChangedによりUIの自動更新を実現
-- 検索機能では全件データと表示用データを分離し整合性を維持
+- 検索機能では全件データと表示用データを分離し、表示と元データの対応を維持
 - 入力ブレ防止のため優先度をenumで管理し、視認性向上のため色分け表示を実装
 
 設計変更や不具合修正を通して、
@@ -135,5 +136,5 @@ FileTaskRepository　/　JsonTaskRepository : 保存処理の実装
 - 締切管理
 
 ### 技術面
-- MVVMへのリファクタリング
+- 設計改善（MVVMなど）の検討
 - 単体テストの導入
