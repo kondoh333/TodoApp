@@ -24,42 +24,29 @@ namespace TodoApp
 
         public List<TaskItem> Load()
         {
-            //例外処理をここに書くのは、読み込み時のエラーはここで起こることなので
-            //発生した層で処理しなければならないため
-            try
-            {
-                //ファイルの有無チェック。なければ空のリストを返している
-                if (!File.Exists(FilePath))
-                    return new List<TaskItem>();
-
-                var tasks = File.ReadAllLines(FilePath)
-                    .Select(line =>
-                    {
-                        var parts = line.Split('|');
-
-                        TaskPriority priority = TaskPriority.Medium;
-
-                        if(parts.Length >= 4)
-                        {
-                            priority = Enum.Parse<TaskPriority>(parts[3]);
-                        }
-
-                        return new TaskItem(parts[0],priority)
-                        {
-                            IsCompleted = bool.Parse(parts[1]),
-                            CreatedDate = DateTime.Parse(parts[2])
-                        };
-                    })
-                    .ToList();
-
-                return tasks;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("読み込み中にエラーが発生しました。");
-                Console.WriteLine(ex.Message);
+            //ファイルの有無チェック。なければ空のリストを返している
+            if (!File.Exists(FilePath))
                 return new List<TaskItem>();
-            }
+
+            return File.ReadAllLines(FilePath)
+                .Select(line =>
+                {
+                    var parts = line.Split('|');
+
+                    TaskPriority priority = TaskPriority.Medium;
+
+                    if(parts.Length >= 4)
+                    {
+                        priority = Enum.Parse<TaskPriority>(parts[3]);
+                    }
+
+                    return new TaskItem(parts[0],priority)
+                    {
+                        IsCompleted = bool.Parse(parts[1]),
+                        CreatedDate = DateTime.Parse(parts[2])
+                    };
+                })
+                .ToList();
         }
     }
 }

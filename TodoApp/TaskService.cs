@@ -21,7 +21,7 @@ namespace TodoApp
         private BindingList<TaskItem> _visibleTasks;
 
         //現在の検索文字
-        private string _currentkeyword = string.Empty;
+        private string _currentKeyword = string.Empty;
 
         
         public TaskService(ITaskRepository repository )
@@ -103,7 +103,7 @@ namespace TodoApp
         public void Search(string keyword)
         {
             //null対策、検索文字を保存しておく
-            _currentkeyword = keyword ?? string.Empty;
+            _currentKeyword = keyword ?? string.Empty;
 
             //今の検索条件で表示を更新
             ApplyFilter();
@@ -122,7 +122,7 @@ namespace TodoApp
         private void ApplyFilter()
         {
             //検索文字の前後の空白を無視する
-            string keyword = _currentkeyword.Trim();
+            string keyword = _currentKeyword.Trim();
 
             //一度表示用リストを空にする
             _visibleTasks.Clear();

@@ -10,13 +10,22 @@ namespace TodoApp
         {
             ApplicationConfiguration.Initialize();
 
-            //保存方法が差し替えられる
-            ITaskRepository repository = new JsonTaskRepository();
-            //ITaskRepository repository = new FIleTaskRepository();
-            ITaskService service = new TaskService(repository);
+            try
+            {
+                //保存方法が差し替えられる
+                ITaskRepository repository = new JsonTaskRepository();
+                //ITaskRepository repository = new FIleTaskRepository();
+                ITaskService service = new TaskService(repository);
 
 
-            Application.Run(new Form1(service));
+                Application.Run(new Form1(service));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("データの読み込みに失敗しました。\n保存ファイルが派損している可能性があります。"
+                    , "エラー");
+                
+            }
         }
     }
 }

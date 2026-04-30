@@ -22,25 +22,16 @@ namespace TodoApp
 
         public List<TaskItem> Load()
         {
-            try
-            {
-                //ファイルの有無チェック。なければ空のリストを返している
-                if (!File.Exists(FilePath))
-                    return new List<TaskItem>();
-
-                string json = File.ReadAllText(FilePath);
-
-                var tasks = JsonSerializer.Deserialize<List<TaskItem>>(json);
-                //上記のデシリアライズでtasksがnullになった場合にクラッシュしないよう、
-                //以下のコードでエラーの場合に空のリストを返すようにしている
-                return tasks ?? new List<TaskItem>();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("JSON読み込み中にエラーが発生しました。");
-                Console.WriteLine(ex.Message);
+            //ファイルの有無チェック。なければ空のリストを返している
+            if (!File.Exists(FilePath))
                 return new List<TaskItem>();
-            }
+
+            string json = File.ReadAllText(FilePath);
+
+            var tasks = JsonSerializer.Deserialize<List<TaskItem>>(json);
+            //上記のデシリアライズでtasksがnullになった場合にクラッシュしないよう、
+            //以下のコードでエラーの場合に空のリストを返すようにしている
+            return tasks ?? new List<TaskItem>();
         }
     }
 }
