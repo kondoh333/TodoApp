@@ -20,11 +20,11 @@ namespace TodoApp
 
                 Application.Run(new Form1(service));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("データの読み込みに失敗しました。\n保存ファイルが派損している可能性があります。"
+                MessageBox.Show("データの読み込みに失敗しました。\n保存ファイルが破損している可能性があります。"
                     , "エラー");
-                
+                Console.WriteLine(ex.Message);
             }
         }
     }
